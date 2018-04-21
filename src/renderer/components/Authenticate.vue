@@ -4,7 +4,7 @@
     <main>
       <div class="left-side">
         <span class="title">
-          Authenticate to ABC.COM
+          Authenticate to {{ domain }}
         </span>
       </div>
 
@@ -37,6 +37,13 @@
     methods: {
       open (link) {
         this.$electron.shell.openExternal(link)
+      }
+    },
+    computed: {
+      domain () {
+        console.log(window.location)
+        // console.log(getURLParameter('domain'))
+        return 'xyz.com'
       }
     }
   }

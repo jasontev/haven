@@ -91,10 +91,10 @@ io.on('connection', function (socket) {
   console.log('a user connected');
 
   socket.on('auth', function (data) {
-    // console.log(data)
-    console.log(winURL)
+    const origin = data.split('//')[1]
+    // console.log(winURL)
     mainWindow.show()
-    mainWindow.loadURL(`${winURL}/#/authenticate/?domain=example.com`)
+    mainWindow.loadURL(`${winURL}/#/authenticate/?domain=${origin}`)
     console.log('auth!');
   });
 });
