@@ -1,6 +1,9 @@
 'use strict'
 
-import { app, BrowserWindow } from 'electron'
+import { app, BrowserWindow, protocol } from 'electron'
+import { schemeName, setupProtocolHandler } from './protocol'
+
+protocol.registerStandardSchemes([schemeName])
 
 /**
  * Set `__static` path to static files in production
@@ -32,7 +35,10 @@ function createWindow () {
   })
 }
 
-app.on('ready', createWindow)
+app.on('ready', function () {
+  createWindow()
+  setupProtocolHandler()
+})
 
 app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') {
