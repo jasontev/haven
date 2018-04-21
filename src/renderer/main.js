@@ -10,7 +10,7 @@ Vue.http = Vue.prototype.$http = axios
 Vue.config.productionTip = false
 
 /* eslint-disable no-new */
-const vm = new Vue({
+new Vue({
   components: { App },
   router,
   store,
