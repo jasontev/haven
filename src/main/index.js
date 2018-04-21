@@ -90,4 +90,16 @@ server({ port: 8080 }, cors, [
     console.log(ctx)
     return 'Hello world'
   }),
+  post('/sign', ctx => {
+    console.log(ctx)
+    return 'signed data here'
+  }),
+  post('/decrypt', ctx => {
+    console.log(ctx)
+    return 'decrypted data here'
+  }),
+  post('/authenticate', ctx => {
+    console.log(ctx)
+    return 'auth data here'
+  }),
 ]);
