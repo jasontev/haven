@@ -89,11 +89,11 @@ expressApp.get('/', function(req, res){
 
 io.on('connection', function(socket){
   console.log('a user connected');
-});
 
-io.on('auth', function(socket){
+  socket.on('auth', function(socket){
   mainWindow.show()
   console.log('auth!');
+});
 });
 
 http.listen(4242, function(){
