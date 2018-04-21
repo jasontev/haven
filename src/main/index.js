@@ -7,10 +7,6 @@ import { app, BrowserWindow, protocol } from 'electron'
 
 const path = require('path')
 
-protocol.registerStandardSchemes(['haven'])
-app.setAsDefaultProtocolClient('haven')
-// protocol.
-
 /**
  * Set `__static` path to static files in production
  * https://simulatedgreg.gitbooks.io/electron-vue/content/en/using-static-assets.html
@@ -32,14 +28,6 @@ function createWindow () {
     height: 563,
     useContentSize: true,
     width: 1000
-  })
-
-  protocol.registerFileProtocol('haven', (request, callback) => {
-    const url = request.url.substr(7)
-    console.log(url)
-    callback({path: path.normalize(`${__dirname}/${url}`)})
-  }, (error) => {
-    if (error) console.error('Failed to register protocol')
   })
 
   mainWindow.loadURL(winURL)
@@ -85,9 +73,21 @@ app.on('ready', () => {
 })
  */
 
-app.on('open-url', function (event, url) {
-  event.preventDefault();
-  console.log("open-url event: " + url)
 
-  // dialog.showErrorBox('open-url', `You arrived from: ${url}`)
-})
+const server = require('server');
+const { get } = server.router;
+const { header } = server.reply;  // OR server.reply;
+
+const cors = [
+  ctx => header("Access-Control-Allow-Origin", "*"),
+  ctx => header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept"),
+  ctx => ctx.method.toLowerCase() === 'options' ? 200 : false
+];
+
+// Launch server with options and a couple of routes
+server({ port: 8080 }, cors, [
+  get('/', ctx => {
+    console.log(ctx)
+    return 'Hello world'
+  }),
+]);
