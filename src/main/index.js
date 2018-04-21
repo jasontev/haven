@@ -96,7 +96,7 @@ io.on('auth', function(socket){
   console.log('a user connected');
 });
 
-http.listen(8080, function(){
-  console.log('listening on *:8080');
+http.listen(4242, function(){
+  console.log('listening on *:4242');
 });
 
