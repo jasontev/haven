@@ -1,10 +1,15 @@
+/* eslint-disable */
+
 'use strict'
 
 import { app, BrowserWindow, protocol } from 'electron'
-import { schemeName, setupProtocolHandler } from './protocol'
+// import { schemeName, setupProtocolHandler } from './protocol'
 
-protocol.registerStandardSchemes([schemeName])
-app.setAsDefaultProtocolClient(schemeName)
+const path = require('path')
+
+protocol.registerStandardSchemes(['haven'])
+app.setAsDefaultProtocolClient('haven')
+// protocol.
 
 /**
  * Set `__static` path to static files in production
@@ -29,6 +34,14 @@ function createWindow () {
     width: 1000
   })
 
+  protocol.registerFileProtocol('atom', (request, callback) => {
+    const url = request.url.substr(7)
+    console.log(url)
+    callback({path: path.normalize(`${__dirname}/${url}`)})
+  }, (error) => {
+    if (error) console.error('Failed to register protocol')
+  })
+
   mainWindow.loadURL(winURL)
 
   mainWindow.on('closed', () => {
@@ -38,7 +51,6 @@ function createWindow () {
 
 app.on('ready', function () {
   createWindow()
-  setupProtocolHandler()
 })
 
 app.on('window-all-closed', () => {
