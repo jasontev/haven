@@ -93,7 +93,7 @@ io.on('connection', function(socket){
 
 io.on('auth', function(socket){
   mainWindow.show()
-  console.log('a user connected');
+  console.log('auth!');
 });
 
 http.listen(4242, function(){
