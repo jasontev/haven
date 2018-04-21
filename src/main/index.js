@@ -84,3 +84,10 @@ app.on('ready', () => {
   if (process.env.NODE_ENV === 'production') autoUpdater.checkForUpdates()
 })
  */
+
+app.on('open-url', function (event, url) {
+  event.preventDefault();
+  console.log("open-url event: " + url)
+
+  // dialog.showErrorBox('open-url', `You arrived from: ${url}`)
+})
