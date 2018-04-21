@@ -75,7 +75,7 @@ app.on('ready', () => {
 
 
 const server = require('server');
-const { get } = server.router;
+const { get, port } = server.router;
 const { header } = server.reply;  // OR server.reply;
 
 const cors = [
