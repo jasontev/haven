@@ -20,8 +20,8 @@ const winURL = process.env.NODE_ENV === 'development'
   ? `http://localhost:9080`
   : `file://${__dirname}/index.html`
 
-  
-function createWindow () {
+
+function createWindow() {
   /**
    * Initial window options
    */
@@ -81,22 +81,22 @@ var cors = require('cors')
 
 expressApp.use(cors())
 
-io.set( 'origins', '*:*' );
+io.set('origins', '*:*');
 
-expressApp.get('/', function(req, res){
+expressApp.get('/', function (req, res) {
   res.send('hello!');
 });
 
-io.on('connection', function(socket){
+io.on('connection', function (socket) {
   console.log('a user connected');
 
-  socket.on('auth', function(socket){
-  mainWindow.show()
-  console.log('auth!');
-});
+  socket.on('auth', function (socket) {
+    mainWindow.show()
+    console.log('auth!');
+  });
 });
 
-http.listen(4242, function(){
+http.listen(4242, function () {
   console.log('listening on *:4242');
 });
 
