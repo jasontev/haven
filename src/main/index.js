@@ -75,7 +75,7 @@ app.on('ready', () => {
 
 
 const server = require('server');
-const { get, port } = server.router;
+const { get, post } = server.router;
 const { header } = server.reply;  // OR server.reply;
 
 const cors = [
@@ -92,6 +92,7 @@ server({ port: 8080 }, cors, [
   }),
   post('/sign', ctx => {
     console.log(ctx)
+    // getKey()
     return 'signed data here'
   }),
   post('/decrypt', ctx => {
