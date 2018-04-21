@@ -79,7 +79,7 @@ var http = require('http').Server(expressApp);
 var io = require('socket.io')(http);
 var cors = require('cors')
 
-app.use(cors())
+expressApp.use(cors())
 
 io.set( 'origins', '*' );
 
