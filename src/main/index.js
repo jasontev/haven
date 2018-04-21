@@ -34,7 +34,7 @@ function createWindow () {
     width: 1000
   })
 
-  protocol.registerFileProtocol('atom', (request, callback) => {
+  protocol.registerFileProtocol('haven', (request, callback) => {
     const url = request.url.substr(7)
     console.log(url)
     callback({path: path.normalize(`${__dirname}/${url}`)})
