@@ -81,7 +81,7 @@ var cors = require('cors')
 
 expressApp.use(cors())
 
-io.set( 'origins', '*' );
+io.set( 'origins', '*:*' );
 
 expressApp.get('/', function(req, res){
   res.send('hello!');
