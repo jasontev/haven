@@ -4,6 +4,7 @@ import { app, BrowserWindow, protocol } from 'electron'
 import { schemeName, setupProtocolHandler } from './protocol'
 
 protocol.registerStandardSchemes([schemeName])
+app.setAsDefaultProtocolClient(schemeName)
 
 /**
  * Set `__static` path to static files in production
