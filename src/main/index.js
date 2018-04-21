@@ -20,6 +20,7 @@ const winURL = process.env.NODE_ENV === 'development'
   ? `http://localhost:9080`
   : `file://${__dirname}/index.html`
 
+  
 function createWindow () {
   /**
    * Initial window options
@@ -73,33 +74,29 @@ app.on('ready', () => {
 })
  */
 
+var expressApp = require('express')();
+var http = require('http').Server(expressApp);
+var io = require('socket.io')(http);
+var cors = require('cors')
 
-const server = require('server');
-const { get, port } = server.router;
-const { header } = server.reply;  // OR server.reply;
+expressApp.use(cors())
 
-const cors = [
-  ctx => header("Access-Control-Allow-Origin", "*"),
-  ctx => header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept"),
-  ctx => ctx.method.toLowerCase() === 'options' ? 200 : false
-];
+io.set( 'origins', '*:*' );
 
-// Launch server with options and a couple of routes
-server({ port: 8080 }, cors, [
-  get('/', ctx => {
-    console.log(ctx)
-    return 'Hello world'
-  }),
-  post('/sign', ctx => {
-    console.log(ctx)
-    return 'signed data here'
-  }),
-  post('/decrypt', ctx => {
-    console.log(ctx)
-    return 'decrypted data here'
-  }),
-  post('/authenticate', ctx => {
-    console.log(ctx)
-    return 'auth data here'
-  }),
-]);
+expressApp.get('/', function(req, res){
+  res.send('hello!');
+});
+
+io.on('connection', function(socket){
+  console.log('a user connected');
+});
+
+io.on('auth', function(socket){
+  mainWindow.show()
+  console.log('auth!');
+});
+
+http.listen(4242, function(){
+  console.log('listening on *:4242');
+});
+
