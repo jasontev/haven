@@ -90,8 +90,11 @@ expressApp.get('/', function (req, res) {
 io.on('connection', function (socket) {
   console.log('a user connected');
 
-  socket.on('auth', function (socket) {
+  socket.on('auth', function (data) {
+    // console.log(data)
+    console.log(winURL)
     mainWindow.show()
+    mainWindow.loadURL(`${winURL}/#/authenticate/?domain=example.com`)
     console.log('auth!');
   });
 });

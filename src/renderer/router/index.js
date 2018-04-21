@@ -11,7 +11,7 @@ export default new Router({
       component: require('@/components/LandingPage').default
     },
     {
-      path: 'authenticate',
+      path: '/authenticate',
       name: 'authenticate-request',
       component: require('@/components/Authenticate').default
     },

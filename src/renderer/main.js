@@ -16,3 +16,5 @@ new Vue({
   store,
   template: '<App/>'
 }).$mount('#app')
+
+router.go(1)
