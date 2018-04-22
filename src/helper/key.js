@@ -9,7 +9,7 @@ var mkdirp = require('mkdirp');
 const havenDir = path.join(os.homedir(), '.haven') + ''
 const keyFile = path.join(havenDir, 'keys.json') + ''
 
-export function loadKey (domain, callback) {
+export function loadPgpKey (domain, callback) {
   // setup files if they don't exist
   console.log(havenDir)
   if(!fs.existsSync(havenDir)) {
@@ -51,4 +51,24 @@ export function loadKey (domain, callback) {
     // return key
     callback(keys[domain])
   }
+}
+
+export function loadKey (domain, callback) {
+  loadPgpKey(domain, function(pgpKey) {
+    kbpgp.KeyManager.import_from_armored_pgp({
+      armored: pgpKey
+    }, function(err, key) {
+      if (!err) {
+        key.unlock_pgp({
+          passphrase: ''
+        }, function(err) {
+          if (err) {
+            console.error(err)
+            return
+          }
+          callback(key)
+        });
+      }
+    });
+  })
 }

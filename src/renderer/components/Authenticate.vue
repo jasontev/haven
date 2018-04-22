@@ -36,7 +36,15 @@
       },
       confirm () {
         loadKey(this.domain, function(key) {
-          console.log(key)
+          kbpgp.box ({
+            msg:        "Here is my manifesto",
+            sign_with:  key
+          }, function(err, result_string, result_buffer) {
+            if (err) {
+              console.error(err)
+            }
+            console.log(result_string);
+          });
         })
         // var key = loadKey(this.domain).private
         // kbpgp.box ({
