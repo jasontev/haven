@@ -9,6 +9,7 @@
   /* eslint-disable */
   import { loadKey } from '../../helper/key.js'
   const kbpgp = require('kbpgp')
+  const {ipcRenderer} = require('electron')
 
   export default {
     name: 'landing-page',
@@ -19,23 +20,21 @@
       confirm () {
         loadKey(this.domain, function(key) {
           console.log(key)
+          const fingerprint = key.get_pgp_fingerprint_str()
+          const timestamp = Date.now()
           kbpgp.box ({
-            msg:        "Here is my manifesto",
+            msg:        [fingerprint, timestamp].join(';'),
             sign_with:  key
-          }, function(err, result_string, result_buffer) {
+          }, function(err, signature) {
             if (err) {
               console.error(err)
             }
-            console.log(result_string);
+            ipcRenderer.sendSync('synchronous-message', {
+              channel: 'authenticated',
+              data: signature
+            })
           });
         })
-        // var key = loadKey(this.domain).private
-        // kbpgp.box ({
-        //   msg:        "Here is my manifesto",
-        //   sign_with:  key
-        // }, function(err, result_string, result_buffer) {
-        //   console.log(err, result_string, result_buffer);
-        // });
       },
       getJsonFromUrl () {
         var query = window.location.hash.split('/')[2].substr(1);
@@ -50,6 +49,11 @@
       }
     },
     computed: {
+      isNewUser () {
+        loadKey(this.domain, function(key) {
+          const fingerprint = key.get_pgp_fingerprint_str()
+        })
+      },
       domain () {
         return this.getJsonFromUrl().domain
       },
