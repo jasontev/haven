@@ -61,7 +61,7 @@
 
             if(!this.isExistingUser) {
               // send requested data
-              const data = JSON.parse(fs.readFileSync(path.join(os.homedir(), '.haven', 'data.json')))
+              const data = JSON.parse(fs.readFileSync(path.join(os.homedir(), '.haven', 'data.json')))[identityIdx].data
               var permissionData = {}
               this.permissions.forEach(name => {
                 permissionData[name] = data[name]
