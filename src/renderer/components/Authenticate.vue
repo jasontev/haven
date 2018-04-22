@@ -17,9 +17,23 @@
   const {ipcRenderer} = require('electron')
   const fs = require('fs')
   const os = require('os')
+  const path = require('path')
 
   export default {
     name: 'landing-page',
+    data () {
+      return {
+        isUser: false
+      }
+    },
+    mounted () {
+      loadKey(this.domain, (key) => {
+        const fingerprint = key.get_pgp_fingerprint_str()
+        const accounts = JSON.parse(fs.readFileSync(path.join(os.homedir(), '.haven', 'accounts.json')))
+        this.isUser = accounts.hasOwnProperty(fingerprint)
+        console.log(this.isUser)
+      })
+    },
     methods: {
       confirm () {
         loadKey(this.domain, function(key) {
@@ -50,13 +64,6 @@
           result[item[0]] = decodeURIComponent(item[1])
         });
         return result;
-      },
-      isNewUser (callback) {
-        loadKey(this.domain, (key) => {
-          const fingerprint = key.get_pgp_fingerprint_str()
-          const accounts = JSON.parse(fs.readFileSync(path.join(os.homedir(), '.haven', 'accounts.json')))
-          callback(accounts.hasOwnProperty(fingerprint))
-        })
       }
     },
     computed: {
