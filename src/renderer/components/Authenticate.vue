@@ -21,9 +21,6 @@
   export default {
     name: 'landing-page',
     methods: {
-      open (link) {
-        this.$electron.shell.openExternal(link)
-      },
       confirm () {
         loadKey(this.domain, function(key) {
           console.log(key)
