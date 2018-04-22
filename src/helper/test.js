@@ -1,9 +1,14 @@
-const exporter = require('./exporter');
+const exporter = require('./exporter')
+const fs = require('fs');
 
-const [wordsKey, encryptedText] = exporter.exportData();
+const [wordsKey, encryptedText] = exporter.exportData()
 
 // console.log(wordsKey);
 
-// console.log(encryptedText);
+console.log(encryptedText);
 
-console.log(exporter.importData(wordsKey, encryptedText))
+fs.writeFileSync('./encryptedText.txt', encryptedText);
+
+
+
+// console.log(exporter.importData(wordsKey, encryptedText))
