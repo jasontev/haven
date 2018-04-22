@@ -42,6 +42,11 @@ app.on('ready', function () {
   createWindow()
 })
 
+app.on('activate', () => {
+  mainWindow.show()
+  mainWindow.loadURL(`${winURL}/#/`)
+})
+
 app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') {
     app.quit()
