@@ -39,7 +39,7 @@ export function loadEntryRaw (identityIdx, domain, callback) {
             data_shared: []
           }
           fs.writeFileSync(dataFile, JSON.stringify(data))
-          callback(data[identityIdx][domain])
+          callback(data[identityIdx].sites[domain])
         })
       });
    });
