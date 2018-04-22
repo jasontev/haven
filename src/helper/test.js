@@ -1,11 +1,3 @@
-const stuff = require('./key')
+const exporter = require('./exporter');
 
-// stuff.loadKey('url');
-
-const result = stuff.loadKey('url')
-
-// console.log(result);
-
-console.log('Public: ' + result.public)
-
-console.log('Private: ' + result.private)
+exporter();
