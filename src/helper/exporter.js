@@ -3,6 +3,7 @@
 const os = require('os')
 const fs = require('fs')
 const aesjs = require('aes-js')
+const getRandomValues = require('get-random-values')
 
 const wordlist = String(fs.readFileSync('./eff-long.txt')).split('\n')
 
@@ -46,6 +47,7 @@ export function exportData () {
     })
     console.log(key)
   })
+  console.log(wordsKey)
 
   const dataStr = String(fs.readFileSync(`${workingDir}/data.json`))
   const dataBytes = aesjs.utils.utf8.toBytes(dataStr)
@@ -58,7 +60,7 @@ export function exportData () {
   return [wordsKey, encryptedText]
 }
 
-export function importData (wordsKey, data) {
+exports.importData = (wordsKey, data) => {
   var key = wordsKey.map(word => {
     wordlist.indexOf(word)
   })
