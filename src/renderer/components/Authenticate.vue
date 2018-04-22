@@ -58,9 +58,21 @@
 
             // update accounts db
             if(!this.isExistingUser) {
+              // mark account as existing
               var accounts = JSON.parse(fs.readFileSync(path.join(os.homedir(), '.haven', 'accounts.json')))
               accounts[this.domain] = fingerprint
               fs.writeFileSync(path.join(os.homedir(), '.haven', 'accounts.json'), JSON.stringify(accounts))
+
+              // send requested data
+              const data = JSON.parse(fs.readFileSync(path.join(os.homedir(), '.haven', 'data.json')))
+              var permissionData = {}
+              this.permissions.forEach(name => {
+                permissionData[name] = data[name]
+              })
+              ipcRenderer.sendSync('synchronous-message', {
+                channel: 'permissionData',
+                data: permissionData
+              })
             }
           });
         })
