@@ -28,6 +28,8 @@
   import { loadKey } from '../../helper/key.js'
   const kbpgp = require('kbpgp')
   const {ipcRenderer} = require('electron')
+  const fs = require('fs')
+  const os = require('os')
 
   export default {
     name: 'landing-page',
@@ -64,14 +66,16 @@
           result[item[0]] = decodeURIComponent(item[1])
         });
         return result;
+      },
+      isNewUser (callback) {
+        loadKey(this.domain, (key) => {
+          const fingerprint = key.get_pgp_fingerprint_str()
+          const accounts = JSON.parse(fs.readFileSync(path.join(os.homedir(), '.haven', 'accounts.json')))
+          callback(accounts.hasOwnProperty(fingerprint))
+        })
       }
     },
     computed: {
-      isNewUser () {
-        loadKey(this.domain, function(key) {
-          const fingerprint = key.get_pgp_fingerprint_str()
-        })
-      },
       domain () {
         return this.getJsonFromUrl().domain
       }
