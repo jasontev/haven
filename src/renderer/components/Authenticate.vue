@@ -26,8 +26,7 @@
     name: 'landing-page',
     data () {
       return {
-        isExistingUser: false,
-        permissions: [],
+        // isExistingUser: false,
         fingerprint: ''
       }
     },
@@ -38,25 +37,24 @@
         const accounts = JSON.parse(fs.readFileSync(path.join(os.homedir(), '.haven', 'accounts.json')))
         this.isExistingUser = accounts.hasOwnProperty(this.domain)
         if (!this.isExistingUser) {
-          this.permissions = JSON.parse(this.getJsonFromUrl().permissions)
+          this.permissions = 
         }
         console.log(this.isUser)
       })
     },
     methods: {
-      confirm () {
-        loadKey(this.domain, key => {
-          console.log(key)
-          const fingerprint = key.get_pgp_fingerprint_str()
+      confirm (identityIdx) {
+        loadEntry(identityIdx, this.domain, entry => {
+          const fingerprint = entry.key.get_pgp_fingerprint_str()
           const timestamp = Date.now()
           kbpgp.box ({
             msg:        [fingerprint, timestamp].join(';'),
-            sign_with:  key
+            sign_with:  entry.key
           }, (err, signature) => {
             if (err) {
               console.error(err)
             }
-            key.export_pgp_public({}, (err, res) => {
+            entry.key.export_pgp_public({}, (err, res) => {
               ipcRenderer.sendSync('synchronous-message', {
                 channel: 'authenticated',
                 data: {
@@ -66,13 +64,7 @@
               })
             })
 
-            // update accounts db
             if(!this.isExistingUser) {
-              // mark account as existing
-              var accounts = JSON.parse(fs.readFileSync(path.join(os.homedir(), '.haven', 'accounts.json')))
-              accounts[this.domain] = fingerprint
-              fs.writeFileSync(path.join(os.homedir(), '.haven', 'accounts.json'), JSON.stringify(accounts))
-
               // send requested data
               const data = JSON.parse(fs.readFileSync(path.join(os.homedir(), '.haven', 'data.json')))
               var permissionData = {}
@@ -102,6 +94,9 @@
     computed: {
       domain () {
         return this.getJsonFromUrl().domain
+      },
+      permissions () {
+        return JSON.parse(this.getJsonFromUrl().permissions)
       }
     }
   }

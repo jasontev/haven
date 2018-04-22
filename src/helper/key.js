@@ -7,9 +7,9 @@ const os = require('os')
 var mkdirp = require('mkdirp');
 
 const havenDir = path.join(os.homedir(), '.haven') + ''
-const keyFile = path.join(havenDir, 'keys.json') + ''
+const dataFile = path.join(havenDir, 'data.json') + ''
 
-export function loadPgpKey (domain, callback) {
+export function loadEntryRaw (identityIdx, domain, callback) {
   // setup files if they don't exist
   console.log(havenDir)
   if(!fs.existsSync(havenDir)) {
@@ -17,16 +17,9 @@ export function loadPgpKey (domain, callback) {
     fs.writeFileSync(keyFile, '{}');
   }
 
-  const keys = JSON.parse(fs.readFileSync(keyFile).toString())
-  if (!keys.hasOwnProperty(domain)) {
-    // generate, save, and return key
-    var my_asp = new kbpgp.ASP({
-      progress_hook: function(o) {
-        console.log("I was called with progress!", o);
-      }
-    });
-    
-    kbpgp.KeyManager.generate_ecc({ asp: my_asp, userid: 'Haven Key' }, function(err, key) {
+  const data = JSON.parse(fs.readFileSync(keyFile).toString())
+  if (!data[identityIdx].hasOwnProperty(domain)) {
+    kbpgp.KeyManager.generate_ecc({ userid: `Haven Key <${domain}>` }, function(err, key) {
       if (err) {
         console.error(err)
         return
@@ -36,27 +29,30 @@ export function loadPgpKey (domain, callback) {
           console.error(err)
           return
         }
-        key.export_pgp_private({ passphrase: '' }, function (err, data) {
+        key.export_pgp_private({ passphrase: '' }, function (err, pgpKey) {
           if (err) {
             console.error(err)
             return
           }
-          keys[domain] = data
+          data[identityIdx][domain] = {
+            key: pgpKey,
+            data_shared: []
+          }
           fs.writeFileSync(keyFile, JSON.stringify(keys))
-          callback(data)
+          callback(data[identityIdx][domain])
         })
       });
    });
   } else {
     // return key
-    callback(keys[domain])
+    callback(data[identityIdx][domain])
   }
 }
 
-export function loadKey (domain, callback) {
-  loadPgpKey(domain, function(pgpKey) {
+export function loadEntry (domain, callback) {
+  loadEntryRaw(domain, function(rawEntry) {
     kbpgp.KeyManager.import_from_armored_pgp({
-      armored: pgpKey
+      armored: rawEntry.key
     }, function(err, key) {
       if (!err) {
         key.unlock_pgp({
@@ -66,7 +62,10 @@ export function loadKey (domain, callback) {
             console.error(err)
             return
           }
-          callback(key)
+          callback({
+            key: key,
+            data_shared: rawEntry.dataFile
+          })
         });
       }
     });
