@@ -10,12 +10,13 @@ const wordlist = String(fs.readFileSync('./eff-long.txt')).split('\n')
 const workingDir = os.homedir() + '/.haven'
 
 exports.exportData = () => {
-  let key = new Uint8Array(16);
-  key = Array(getRandomValues(key));
+  const keyArr = new Uint8Array(16);
+  const key = getRandomValues(keyArr)
 
-  const wordsKey = key.map(byte => {
-    return wordlist[byte]
-  })
+  const wordsKey = [];
+  for(let byte in key) {
+    wordsKey.push(wordlist[key[byte]]);
+  }
   console.log(wordsKey)
 
   const dataStr = String(fs.readFileSync(`${workingDir}/data.json`))
@@ -30,7 +31,16 @@ exports.exportData = () => {
 }
 
 exports.importData = (wordsKey, data) => {
-  var key = wordsKey.map(word => {
-    wordlist.indexOf(word)
+  const key = [];
+
+  wordsKey.forEach(value => {
+    key.push(wordlist.indexOf(value));
   })
+  const dataBytes = aesjs.utils.hex.toBytes(data);
+  const aesCtr = new aesjs.ModeOfOperation.ctr(key, new aesjs.Counter(5));
+  const decryptedBytes = aesCtr.decrypt(dataBytes);
+  const decryptedText = aesjs.utils.utf8.fromBytes(decryptedBytes);
+
+  return decryptedText;
+
 }
