@@ -37,6 +37,11 @@
               channel: 'authenticated',
               data: signature
             })
+
+            // update accounts db
+            var accounts = JSON.parse(fs.readFileSync(path.join(os.homedir(), '.haven', 'accounts.json')))
+            accounts[this.domain] = fingerprint
+            fs.writeFileSync(fs.readFileSync(path.join(os.homedir(), '.haven', 'accounts.json'), JSON.stringify(accounts)))
           });
         })
       },
