@@ -77,7 +77,8 @@
                 channel: 'authenticated',
                 data: {
                   signature: signature,
-                  pubkey: res
+                  pubkey: res,
+                  fingerprint: fingerprint
                 }
               })
             })
