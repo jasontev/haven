@@ -18,7 +18,7 @@ export function loadEntryRaw (identityIdx, domain, callback) {
   }
 
   const data = JSON.parse(fs.readFileSync(keyFile).toString())
-  if (!data[identityIdx].hasOwnProperty(domain)) {
+  if (!data[identityIdx].sites.hasOwnProperty(domain)) {
     kbpgp.KeyManager.generate_ecc({ userid: `Haven Key <${domain}>` }, function(err, key) {
       if (err) {
         console.error(err)
@@ -34,7 +34,7 @@ export function loadEntryRaw (identityIdx, domain, callback) {
             console.error(err)
             return
           }
-          data[identityIdx][domain] = {
+          data[identityIdx].sites[domain] = {
             key: pgpKey,
             data_shared: []
           }
@@ -45,7 +45,7 @@ export function loadEntryRaw (identityIdx, domain, callback) {
    });
   } else {
     // return key
-    callback(data[identityIdx][domain])
+    callback(data[identityIdx].sites[domain])
   }
 }
 

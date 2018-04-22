@@ -35,7 +35,6 @@
         this.fingerprint = fingerprint
         const accounts = JSON.parse(fs.readFileSync(path.join(os.homedir(), '.haven', 'accounts.json')))
         this.isExistingUser = accounts.hasOwnProperty(this.domain)
-        console.log(this.isUser)
       })
     },
     methods: {
