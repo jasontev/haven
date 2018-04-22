@@ -79,6 +79,8 @@ var http = require('http').Server(expressApp);
 var io = require('socket.io')(http);
 var cors = require('cors')
 
+const { ipcMain } = require('electron')
+
 expressApp.use(cors())
 
 io.set('origins', '*:*');
@@ -89,14 +91,26 @@ expressApp.get('/', function (req, res) {
 
 io.on('connection', function (socket) {
   console.log('a user connected');
+  const nonce = Math.random().toString(36).substring(7);
 
   socket.on('auth', function (data) {
     const origin = data.origin.split('//')[1]
     // console.log(winURL)
     mainWindow.show()
-    mainWindow.loadURL(`${winURL}/#/authenticate/?domain=${origin}&permissions=${JSON.stringify(data.permissions)}`)
+    mainWindow.loadURL(`${winURL}/#/authenticate/?domain=${origin}&permissions=${JSON.stringify(data.permissions)}&nonce=${nonce}`)
     console.log('auth!');
   });
+
+  const handler = (event, arg) => {
+    socket.emit(arg.channel, arg.data)
+    event.returnValue = null
+  }
+
+  ipcMain.on('synchronous-message', handler)
+
+  socket.on('disconnect', () => {
+    ipcMain.removeListener('synchronous-message', handler)
+  })
 });
 
 http.listen(4242, function () {
