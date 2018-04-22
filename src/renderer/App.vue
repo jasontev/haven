@@ -11,5 +11,8 @@
 </script>
 
 <style lang="sass">
-  @import "~bootstrap/scss/bootstrap"
+@import "~bootstrap/scss/bootstrap"
+@import url('https://fonts.googleapis.com/css?family=Karla')
+body
+  font-family: "Karla"
 </style>

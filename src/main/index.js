@@ -42,10 +42,10 @@ app.on('ready', function () {
   createWindow()
 })
 
-// app.on('activate', () => {
-//   mainWindow.show()
-//   mainWindow.loadURL(`${winURL}/#/`)
-// })
+app.on('activate', () => {
+  mainWindow.show()
+  mainWindow.loadURL(`${winURL}/#/`)
+})
 
 app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') {
@@ -110,7 +110,7 @@ io.on('connection', function (socket) {
   const handler = (event, arg) => {
     socket.emit(arg.channel, arg.data)
     event.returnValue = null
-    // mainWindow.hide()
+    mainWindow.hide()
   }
 
   ipcMain.on('synchronous-message', handler)

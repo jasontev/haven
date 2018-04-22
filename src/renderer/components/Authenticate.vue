@@ -1,15 +1,25 @@
 <template>
-  <div class="container" style="padding: 80px 50px" >
-    <div v-if="true">
-      <strong>{{ domain }} is requesting the following permissions:</strong>
-      <ul>
-        <li v-for="permission in permissions" :key="permission">{{permission}}</li>
-      </ul>
+  <div>
+    <div class="bg-info text-light p-1 text-center">
+      Secure authentication by Haven Auth
     </div>
-    <div v-else>
-      <strong>Would you like to sign in to {{ domain }} with your existing account?</strong>
+    <div class="container pt-3 bg-light">
+      <div class="card bg-light border p-3">
+        <div v-if="true">
+          <strong><code>{{ domain }}</code> is requesting the following permissions:</strong>
+          <ul>
+            <li v-for="permission in permissions" :key="permission">{{permission}}</li>
+          </ul>
+        </div>
+        <div v-else>
+          <strong>Would you like to sign in to {{ domain }} with your existing account?</strong>
+        </div>
+      </div>
+      <div class="mt-3">
+        <div class="mb-1"><strong>Select which identity you would like to authenticate with:</strong></div>
+        <button v-for="(identity, index) in identities" :key="index" class="btn btn-default btn-block" @click="confirm(index)">{{ identity.identity_name }}</button><br><br>
+      </div>
     </div>
-    <button class="mt-5 btn btn-success btn-block" @click="confirm(0)">Confirm</button><br><br>
   </div>
 </template>
 
@@ -24,6 +34,11 @@
 
   export default {
     name: 'landing-page',
+    data () {
+      return {
+        identities: []
+      }
+    },
     // data () {
     //   return {
     //     fingerprint: ''
@@ -37,6 +52,14 @@
     //     this.isExistingUser = accounts.hasOwnProperty(this.domain)
     //   })
     // },
+    mounted () {
+      const havenDir = path.join(os.homedir(), '.haven') + ''
+      const dataFile = path.join(havenDir, 'data.json') + ''
+
+      const data = JSON.parse(fs.readFileSync(dataFile).toString())
+
+      this.identities = data
+    },
     methods: {
       confirm (identityIdx) {
         loadEntry(identityIdx, this.domain, entry => {
