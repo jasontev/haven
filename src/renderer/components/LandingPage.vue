@@ -18,7 +18,13 @@
     <button @click="importData()">Import</button>
     <button @click="exportData()">Export</button>
 
-    <p v-if="words">Your decryption words are: <strong>{{ words }}</strong> - the encrypted backup file has been placed on your desktop</p>
+    <p v-if="words">
+      Your decryption words are: <strong>{{ words }}</strong> - the encrypted backup file has been placed on your desktop
+      In order to decrypt you must save these words into a file called 'words.txt' on the desktop of the computer you want to share Haven with.
+    </p>
+    <p v-if="decrypted">
+      Your encrypted txt file was decrypted and placed into .haven/data.json. Please restart the application to apply changes.
+    </p>
   </div>
 </template>
 
@@ -36,7 +42,8 @@
     data () {
       return {
         identities: [],
-        words: ''
+        words: '',
+        decrypted: false
       }
     },
     mounted () {
@@ -49,23 +56,26 @@
     },
     methods: {
       importData () {
-        // console.log(exporter.exportData())
-        // const key = [];
+        const wordsKey = String(fs.readFileSync(os.homedir() + '/Desktop/words.txt')).split(' ')
+        const data = String(fs.readFileSync(os.homedir() + '/Desktop/encryptedText.txt'))
+        const key = []
+        wordsKey.forEach(value => {
+          key.push(wordlist.indexOf(value))
+        })
+        const dataBytes = aesjs.utils.hex.toBytes(data)
+        const Ctr = aesjs.ModeOfOperation.ctr
+        const aesCtr = new Ctr(key, new aesjs.Counter(5))
+        const decryptedBytes = aesCtr.decrypt(dataBytes)
+        const decryptedText = aesjs.utils.utf8.fromBytes(decryptedBytes)
 
-        // wordsKey.forEach(value => {
-        //   key.push(wordlist.indexOf(value));
-        // })
-        // const dataBytes = aesjs.utils.hex.toBytes(data);
-        // const aesCtr = new aesjs.ModeOfOperation.ctr(key, new aesjs.Counter(5));
-        // const decryptedBytes = aesCtr.decrypt(dataBytes);
-        // const decryptedText = aesjs.utils.utf8.fromBytes(decryptedBytes);
-
-        // return decryptedText;
+        fs.writeFileSync(os.homedir() + '/.haven/data.json', decryptedText)
+        this.decrypted = true
       },
       exportData () {
+        console.log('hello')
         // fs.createReadStream(path.join(os.homedir(), '.haven', 'data.json')).pipe(fs.createWriteStream(path.join(os.homedir(), 'Desktop', 'havin-data.json')))
         // console.log(exporter.exportData())
-        const workingDir = path.join(os.homedir(), '.haven') + ''
+        const workingDir = path.join(os.homedir(), '/.haven') + ''
         const key = new Uint8Array(16)
         getRandomValues(key)
         console.log(key)
