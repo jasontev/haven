@@ -1,25 +1,36 @@
-const os = require('os');
-const fs = require('fs');
-const aesjs = require('aes-js');
+/* eslint-disable */
 
-const wordlist = String(fs.readFileSync('./eff-long.txt')).split('\n');
+const os = require('os')
+const fs = require('fs')
+const aesjs = require('aes-js')
+const getRandomValues = require('get-random-values')
 
-const workingDir = os.homedir() + '/.haven';
+const wordlist = String(fs.readFileSync('./eff-long.txt')).split('\n')
 
-module.exports = () => {
-    const key = [ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16 ];
-    
+const workingDir = os.homedir() + '/.haven'
 
-    console.log(key);
+exports.exportData = () => {
+  let key = new Uint8Array(16);
+  key = Array(getRandomValues(key));
 
-    const dataStr = String(fs.readFileSync(`${workingDir}/data.json`));
-    const dataBytes = aesjs.utils.utf8.toBytes(dataStr);
+  const wordsKey = key.map(byte => {
+    return wordlist[byte]
+  })
+  console.log(wordsKey)
 
-    const aesCtr = new aesjs.ModeOfOperation.ctr(key, new aesjs.Counter(5));
-    const encryptedBytes = aesCtr.encrypt(dataBytes);
+  const dataStr = String(fs.readFileSync(`${workingDir}/data.json`))
+  const dataBytes = aesjs.utils.utf8.toBytes(dataStr)
 
-    const encryptedText = aesjs.utils.utf8.fromBytes(encryptedBytes);
+  const aesCtr = new aesjs.ModeOfOperation.ctr(key, new aesjs.Counter(5))
+  const encryptedBytes = aesCtr.encrypt(dataBytes)
 
-    console.log(encryptedText);
+  const encryptedText = aesjs.utils.hex.fromBytes(encryptedBytes)
 
+  return [wordsKey, encryptedText]
+}
+
+exports.importData = (wordsKey, data) => {
+  var key = wordsKey.map(word => {
+    wordlist.indexOf(word)
+  })
 }

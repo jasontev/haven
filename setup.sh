@@ -3,13 +3,27 @@
 cd ~
 mkdir .haven
 cd .haven
-echo '{}' > accounts.json
-echo '{}' > keys.json
 cat > data.json <<EOF 
-{
-    "name": "John Doe",
-    "email": "john.doe@example.com",
-    "birthdate": "2000-01-01"
-}
+[
+    {
+        "identity_name":"Batman",
+        "data":{
+            "name":"Batman",
+            "email":"batman@gmail.com"
+        },
+        "sites": {
+
+        }
+    },
+    {
+        "identity_name": "Bruce Wayne",
+        "data": {
+            "name": "Bruce Wayne",
+            "email": "bruce@wayne.com"
+        },
+        "sites": {
+
+        }
+    }
+]
 EOF
-echo '{}' > accounts.json
