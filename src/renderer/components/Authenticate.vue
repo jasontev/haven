@@ -47,9 +47,14 @@
             if (err) {
               console.error(err)
             }
-            ipcRenderer.sendSync('synchronous-message', {
-              channel: 'authenticated',
-              data: signature
+            key.export_pgp_public({}, (err, res) => {
+              ipcRenderer.sendSync('synchronous-message', {
+                channel: 'authenticated',
+                data: {
+                  signature: signature,
+                  pubkey: res
+                }
+              })
             })
           });
         })
