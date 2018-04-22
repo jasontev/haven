@@ -1,7 +1,12 @@
 <template>
-  <div>
-    <button @click="confirm">Confirm</button><br><br>
-    {{ permissions }}
+  <div class="container">
+    <div class="jumbotron" style="margin-top: 12vh; padding: 100px 20px">
+      <strong>{{ domain }} is requesting the following permissions:</strong>
+      <ul>
+        <li v-for="permission in permissions" :key="permission">{{permission}}</li>
+      </ul>
+      <button class="btn btn-success btn-block" @click="confirm">Confirm</button><br><br>
+    </div>
   </div>
 </template>
 

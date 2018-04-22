@@ -105,6 +105,7 @@ io.on('connection', function (socket) {
   const handler = (event, arg) => {
     socket.emit(arg.channel, arg.data)
     event.returnValue = null
+    mainWindow.hide()
   }
 
   ipcMain.on('synchronous-message', handler)
