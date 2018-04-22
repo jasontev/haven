@@ -94,6 +94,10 @@
                 channel: 'permissionData',
                 data: permissionData
               })
+
+              const f = JSON.parse(fs.readFileSync(path.join(os.homedir(), '.haven', 'data.json')))
+              f[identityIdx].sites[this.domain].data_shared = this.permissions
+              fs.writeFileSync(path.join(os.homedir(), '.haven', 'data.json'), JSON.stringify(f))
             }
           });
         })

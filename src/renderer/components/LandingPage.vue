@@ -9,10 +9,12 @@
       <div class="card-body">
         Connected sites:
         <ul>
-          <li v-for="(site, key) in identity.sites" :key="key">{{ key }}</li>
+          <li v-for="(site, key) in identity.sites" :key="key">{{ key }}<br><div>{{ site.data_shared }}</div></li>
         </ul>
       </div>
     </div>
+    <button @click="importData()">Import</button>
+    <button @click="exportData()">Export</button>
   </div>
 </template>
 
@@ -20,6 +22,7 @@
   const fs = require('fs')
   const os = require('os')
   const path = require('path')
+  // const {ipcRenderer} = require('electron')
   export default {
     name: 'landing-page',
     data () {
@@ -34,6 +37,14 @@
       const data = JSON.parse(fs.readFileSync(dataFile).toString())
 
       this.identities = data
+    },
+    methods: {
+      importData () {
+        // fs.createReadStream(path.join(os.homedir(), '.haven', 'data.json')).pipe(fs.createWriteStream(path.join(os.homedir(), 'Desktop', 'havin-data.json')))
+      },
+      exportData () {
+        // fs.createReadStream(path.join(os.homedir(), '.haven', 'data.json')).pipe(fs.createWriteStream(path.join(os.homedir(), 'Desktop', 'havin-data.json')))
+      }
     }
   }
 </script>

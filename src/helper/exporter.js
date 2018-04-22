@@ -9,14 +9,6 @@ const wordlist = String(fs.readFileSync('./eff-long.txt')).split('\n')
 
 const workingDir = os.homedir() + '/.haven'
 
-exports.exportData = () => {
-  const keyArr = new Uint8Array(16);
-  const key = getRandomValues(keyArr)
-
-  const wordsKey = [];
-  for(let byte in key) {
-    wordsKey.push(wordlist[key[byte]]);
-  }
 export function exportData () {
   var key = new Uint8Array(16);
   window.crypto.getRandomValues(key);
@@ -55,7 +47,6 @@ export function exportData () {
     })
     console.log(key)
   })
->>>>>>> 563533773571753f874b163b7be6f6ccfc622a96
   console.log(wordsKey)
 
   const dataStr = String(fs.readFileSync(`${workingDir}/data.json`))
@@ -81,5 +72,4 @@ exports.importData = (wordsKey, data) => {
   const decryptedText = aesjs.utils.utf8.fromBytes(decryptedBytes);
 
   return decryptedText;
-
 }

@@ -107,6 +107,8 @@ io.on('connection', function (socket) {
     console.log('auth!');
   });
 
+  var fs = require('fs')
+  var os = require('os')
   const handler = (event, arg) => {
     socket.emit(arg.channel, arg.data)
     event.returnValue = null
