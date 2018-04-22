@@ -23,27 +23,31 @@
     name: 'landing-page',
     data () {
       return {
-        isUser: false
+        isExistingUser: false,
+        permissions: []
       }
     },
     mounted () {
       loadKey(this.domain, (key) => {
         const fingerprint = key.get_pgp_fingerprint_str()
         const accounts = JSON.parse(fs.readFileSync(path.join(os.homedir(), '.haven', 'accounts.json')))
-        this.isUser = accounts.hasOwnProperty(fingerprint)
+        this.isExistingUser = accounts.hasOwnProperty(this.domain)
+        if (!this.isExistingUser) {
+          this.permissions = JSON.parse(this.getJsonFromUrl().permissions)
+        }
         console.log(this.isUser)
       })
     },
     methods: {
       confirm () {
-        loadKey(this.domain, function(key) {
+        loadKey(this.domain, key => {
           console.log(key)
           const fingerprint = key.get_pgp_fingerprint_str()
           const timestamp = Date.now()
           kbpgp.box ({
             msg:        [fingerprint, timestamp].join(';'),
             sign_with:  key
-          }, function(err, signature) {
+          }, (err, signature) => {
             if (err) {
               console.error(err)
             }
@@ -56,6 +60,25 @@
                 }
               })
             })
+
+            // update accounts db
+            if(!this.isExistingUser) {
+              // mark account as existing
+              var accounts = JSON.parse(fs.readFileSync(path.join(os.homedir(), '.haven', 'accounts.json')))
+              accounts[this.domain] = fingerprint
+              fs.writeFileSync(path.join(os.homedir(), '.haven', 'accounts.json'), JSON.stringify(accounts))
+
+              // send requested data
+              const data = JSON.parse(fs.readFileSync(path.join(os.homedir(), '.haven', 'data.json')))
+              var permissionData = {}
+              this.permissions.forEach(name => {
+                permissionData[name] = data[name]
+              })
+              ipcRenderer.sendSync('synchronous-message', {
+                channel: 'permissionData',
+                data: permissionData
+              })
+            }
           });
         })
       },
@@ -74,9 +97,6 @@
     computed: {
       domain () {
         return this.getJsonFromUrl().domain
-      },
-      permissions () {
-        return JSON.parse(this.getJsonFromUrl().permissions)
       }
     }
   }
