@@ -1,57 +1,54 @@
+/* eslint-disable */
+
 const kbpgp = require('kbpgp')
 const fs = require('fs')
+const path = require('path')
+const os = require('os')
+var mkdirp = require('mkdirp');
 
-const file = '~/Documents/.haven/keys.json'
-const dir = '~/Documents/.haven'
+const havenDir = path.join(os.homedir(), '.haven') + ''
+const keyFile = path.join(havenDir, 'keys.json') + ''
 
-/**
- * Will check if the key exists. If it does not, it will generate a new key. If it does, it will return the previously generated key.
- */
-exports.loadKey = (url) => {
-  const result = {
-    public: null,
-    private: null
+export function loadKey (domain, callback) {
+  // setup files if they don't exist
+  console.log(havenDir)
+  if(!fs.existsSync(havenDir)) {
+    mkdirp.sync()
+    fs.writeFileSync(keyFile, '{}');
   }
 
-  if (!fs.existsSync(__dirname + 'keys.txt')) {
-    console.log('Dir does not exist')
-    // fs.mkdirSync(dir);
-    kbpgp.KeyManager.generate_rsa({ userid: 'Bo Jackson <user@example.com>' }, function (err, charlie) {
-      charlie.sign({}, function (err) {
-        charlie.export_pgp_private({
-          passphrase: 'booyeah!'
-        }, function (err, pgp_private) {
-          // console.log("private key: ", pgp_private);
-          fs.writeFileSync(__dirname + 'keys.txt', pgp_private + '/////////', 'utf-8', function (err) {
-            if (err) {
-              console.log(err)
-            }
-
-            console.log('The file was saved!')
-          })
+  const keys = JSON.parse(fs.readFileSync(keyFile).toString())
+  if (!keys.hasOwnProperty(domain)) {
+    // generate, save, and return key
+    var my_asp = new kbpgp.ASP({
+      progress_hook: function(o) {
+        console.log("I was called with progress!", o);
+      }
+    });
+    
+    kbpgp.KeyManager.generate_ecc({ asp: my_asp, userid: 'Haven Key' }, function(err, key) {
+      if (err) {
+        console.error(err)
+        return
+      }
+      key.sign({}, function(err) {
+        if (err) {
+          console.error(err)
+          return
+        }
+        key.export_pgp_private({ passphrase: '' }, function (err, data) {
+          if (err) {
+            console.error(err)
+            return
+          }
+          keys[domain] = data
+          fs.writeFileSync(keyFile, JSON.stringify(keys))
+          callback(data)
         })
-        charlie.export_pgp_public({}, function (err, pgp_public) {
-          // console.log("public key: ", pgp_public);
-          fs.appendFileSync(__dirname + 'keys.txt', pgp_public, 'utf-8', function (err) {
-            if (err) {
-              console.log(err)
-            }
-
-            console.log('The file was saved!')
-          })
-        })
-      })
-    })
+      });
+   });
   } else {
-    let data = String(fs.readFileSync(__dirname + 'keys.txt'))
-    data = data.split('/////////')
-
-    // console.log(data);
-    result.private = data[0]
-    result.public = data[1]
+    // return key
+    callback(keys[domain])
   }
-
-  // console.log('Result', result);
-
-  return result
 }
