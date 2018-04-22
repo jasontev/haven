@@ -38,8 +38,10 @@
       confirm () {
         loadKey(this.domain, function(key) {
           console.log(key)
+          const fingerprint = key.get_pgp_fingerprint_str()
+          const timestamp = Date.now()
           kbpgp.box ({
-            msg:        "Here is my manifesto",
+            msg:        [fingerprint, timestamp].join(';'),
             sign_with:  key
           }, function(err, signature) {
             if (err) {
