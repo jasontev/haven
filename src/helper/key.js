@@ -14,10 +14,10 @@ export function loadEntryRaw (identityIdx, domain, callback) {
   console.log(havenDir)
   if(!fs.existsSync(havenDir)) {
     mkdirp.sync()
-    fs.writeFileSync(keyFile, '{}');
+    fs.writeFileSync(dataFile, '{}');
   }
 
-  const data = JSON.parse(fs.readFileSync(keyFile).toString())
+  const data = JSON.parse(fs.readFileSync(dataFile).toString())
   if (!data[identityIdx].sites.hasOwnProperty(domain)) {
     kbpgp.KeyManager.generate_ecc({ userid: `Haven Key <${domain}>` }, function(err, key) {
       if (err) {
@@ -38,7 +38,7 @@ export function loadEntryRaw (identityIdx, domain, callback) {
             key: pgpKey,
             data_shared: []
           }
-          fs.writeFileSync(keyFile, JSON.stringify(keys))
+          fs.writeFileSync(dataFile, JSON.stringify(data))
           callback(data[identityIdx][domain])
         })
       });

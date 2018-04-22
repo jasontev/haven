@@ -1,6 +1,6 @@
 <template>
   <div class="container" style="padding: 80px 50px" >
-    <div v-if="!isExistingUser">
+    <div v-if="true">
       <strong>{{ domain }} is requesting the following permissions:</strong>
       <ul>
         <li v-for="permission in permissions" :key="permission">{{permission}}</li>
@@ -9,13 +9,13 @@
     <div v-else>
       <strong>Would you like to sign in to {{ domain }} with your existing account?</strong>
     </div>
-    <button class="mt-5 btn btn-success btn-block" @click="confirm">Confirm</button><br><br>
+    <button class="mt-5 btn btn-success btn-block" @click="confirm(0)">Confirm</button><br><br>
   </div>
 </template>
 
 <script>
   /* eslint-disable */
-  import { loadKey } from '../../helper/key.js'
+  import { loadEntry } from '../../helper/key.js'
   const kbpgp = require('kbpgp')
   const {ipcRenderer} = require('electron')
   const fs = require('fs')
@@ -24,19 +24,19 @@
 
   export default {
     name: 'landing-page',
-    data () {
-      return {
-        fingerprint: ''
-      }
-    },
-    mounted () {
-      loadKey(this.domain, (key) => {
-        const fingerprint = key.get_pgp_fingerprint_str()
-        this.fingerprint = fingerprint
-        const accounts = JSON.parse(fs.readFileSync(path.join(os.homedir(), '.haven', 'accounts.json')))
-        this.isExistingUser = accounts.hasOwnProperty(this.domain)
-      })
-    },
+    // data () {
+    //   return {
+    //     fingerprint: ''
+    //   }
+    // },
+    // mounted () {
+    //   loadKey(this.domain, (key) => {
+    //     const fingerprint = key.get_pgp_fingerprint_str()
+    //     this.fingerprint = fingerprint
+    //     const accounts = JSON.parse(fs.readFileSync(path.join(os.homedir(), '.haven', 'accounts.json')))
+    //     this.isExistingUser = accounts.hasOwnProperty(this.domain)
+    //   })
+    // },
     methods: {
       confirm (identityIdx) {
         loadEntry(identityIdx, this.domain, entry => {
