@@ -26,7 +26,6 @@
     name: 'landing-page',
     data () {
       return {
-        // isExistingUser: false,
         fingerprint: ''
       }
     },
@@ -36,9 +35,6 @@
         this.fingerprint = fingerprint
         const accounts = JSON.parse(fs.readFileSync(path.join(os.homedir(), '.haven', 'accounts.json')))
         this.isExistingUser = accounts.hasOwnProperty(this.domain)
-        if (!this.isExistingUser) {
-          this.permissions = 
-        }
         console.log(this.isUser)
       })
     },
