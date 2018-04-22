@@ -49,8 +49,8 @@ export function loadEntryRaw (identityIdx, domain, callback) {
   }
 }
 
-export function loadEntry (domain, callback) {
-  loadEntryRaw(domain, function(rawEntry) {
+export function loadEntry (identityIdx, domain, callback) {
+  loadEntryRaw(identityIdx, domain, function(rawEntry) {
     kbpgp.KeyManager.import_from_armored_pgp({
       armored: rawEntry.key
     }, function(err, key) {
