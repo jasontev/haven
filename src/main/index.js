@@ -78,6 +78,7 @@ var expressApp = require('express')();
 var http = require('http').Server(expressApp);
 var io = require('socket.io')(http);
 var cors = require('cors')
+global.io = io
 
 expressApp.use(cors())
 
