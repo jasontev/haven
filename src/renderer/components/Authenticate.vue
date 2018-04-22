@@ -1,12 +1,15 @@
 <template>
-  <div class="container">
-    <div class="jumbotron" style="margin-top: 12vh; padding: 100px 20px">
+  <div class="container" style="padding: 80px 50px" >
+    <div v-if="!isExistingUser">
       <strong>{{ domain }} is requesting the following permissions:</strong>
       <ul>
         <li v-for="permission in permissions" :key="permission">{{permission}}</li>
       </ul>
-      <button class="btn btn-success btn-block" @click="confirm">Confirm</button><br><br>
     </div>
+    <div v-else>
+      <strong>Would you like to sign in to {{ domain }} with your existing account?</strong>
+    </div>
+    <button class="mt-5 btn btn-success btn-block" @click="confirm">Confirm</button><br><br>
   </div>
 </template>
 
@@ -24,12 +27,14 @@
     data () {
       return {
         isExistingUser: false,
-        permissions: []
+        permissions: [],
+        fingerprint: ''
       }
     },
     mounted () {
       loadKey(this.domain, (key) => {
         const fingerprint = key.get_pgp_fingerprint_str()
+        this.fingerprint = fingerprint
         const accounts = JSON.parse(fs.readFileSync(path.join(os.homedir(), '.haven', 'accounts.json')))
         this.isExistingUser = accounts.hasOwnProperty(this.domain)
         if (!this.isExistingUser) {
