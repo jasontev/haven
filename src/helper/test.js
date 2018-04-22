@@ -1,3 +1,5 @@
 const exporter = require('./exporter');
 
-exporter();
+const [wordsKey, encryptedText] = exporter.exportData();
+
+console.log(wordsKey);
