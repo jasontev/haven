@@ -49,9 +49,7 @@
     },
     computed: {
       domain () {
-        console.log(window.location)
-        // console.log(getURLParameter('domain'))
-        return 'xyz.com'
+        return decodeURIComponent(window.location.href.split('domain=')[1])
       }
     }
   }
