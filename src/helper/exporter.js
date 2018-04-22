@@ -15,7 +15,6 @@ export function exportData () {
   const wordsKey = key.map(byte => {
     wordlist[byte]
   })
-  // console.log(wordsKey)
 
   const dataStr = String(fs.readFileSync(`${workingDir}/data.json`))
   const dataBytes = aesjs.utils.utf8.toBytes(dataStr)
