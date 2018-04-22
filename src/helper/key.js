@@ -6,8 +6,8 @@ const path = require('path')
 const os = require('os')
 var mkdirp = require('mkdirp');
 
-const havenDir = path.join(os.homedir(), '.haven') + ''
-const keyFile = path.join(havenDir, 'keys.json') + ''
+const havenDir = String(path.join(os.homedir(), '.haven'))
+const keyFile = String(path.join(havenDir, 'keys.json'))
 
 export function loadPgpKey (domain, callback) {
   // setup files if they don't exist
