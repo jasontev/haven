@@ -36,6 +36,7 @@
       },
       confirm () {
         loadKey(this.domain, function(key) {
+          console.log(key)
           kbpgp.box ({
             msg:        "Here is my manifesto",
             sign_with:  key
@@ -53,11 +54,22 @@
         // }, function(err, result_string, result_buffer) {
         //   console.log(err, result_string, result_buffer);
         // });
+      },
+      getJsonFromUrl () {
+        var query = window.location.hash.split('/')[2].substr(1);
+        var result = {};
+        console.log(query)
+        query.split(/[&?]/g).forEach(function(part) {
+          console.log(part)
+          var item = part.split("=")
+          result[item[0]] = decodeURIComponent(item[1])
+        });
+        return result;
       }
     },
     computed: {
       domain () {
-        return decodeURIComponent(window.location.href.split('domain=')[1])
+        return this.getJsonFromUrl().domain
       }
     }
   }
